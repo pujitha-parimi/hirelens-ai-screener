@@ -1,36 +1,34 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# HireLens — AI Resume Screening, Matching & Candidate Shortlisting Platform
 
-## Getting Started
+HireLens is an end-to-end **multi-agent AI recruitment screening platform** built with **Next.js App Router, TypeScript, Prisma v6, Neon PostgreSQL (`pgvector`), LangGraph.js, Zod, and Google Gemini**. It parses multi-format resumes (`PDF`, `DOCX`, `DOC`, `TXT`), chunks resumes by semantic section, embeds them with Gemini vector embeddings, strips protected demographic attributes, and produces **evidence-backed, weighted candidate rankings** with tailored interview questions and human-in-the-loop recruiter overrides.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Architecture: 6-Agent LangGraph Screening Pipeline
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```text
+Resume Upload (PDF / DOCX / DOC / TXT)
+        │
+        ▼
+┌─────────────────────────────────────────────────────────────┐
+│ 1. JDAnalysisAgent          → Extracts must-have skills,     │
+│                               seniority, red flags & bias   │
+├─────────────────────────────────────────────────────────────┤
+│ 2. ResumeParsingAgent       → Extracts structured profile   │
+│                               with strict Zod validation    │
+├─────────────────────────────────────────────────────────────┤
+│ 3. BiasComplianceGuardrail  → Redacts protected attributes  │
+│                               (age, gender, religion, etc.) │
+├─────────────────────────────────────────────────────────────┤
+│ 4. HybridRAGEvaluationAgent → Semantic chunk vector search  │
+│                               + 7-dimension evidence scoring│
+├─────────────────────────────────────────────────────────────┤
+│ 5. LinkedInConsistencyAgent → Validates profile handle      │
+│                               (zero unauthorized scraping)  │
+├─────────────────────────────────────────────────────────────┤
+│ 6. FinalReportAgent         → Computes custom weighted score│
+│                               & generates interview guide   │
+└─────────────────────────────────────────────────────────────┘
+        │
+        ▼
+Neon Cloud PostgreSQL (Candidate, CandidateChunk, Evaluation + Audit Log)

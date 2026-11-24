@@ -1,0 +1,109 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Organization {
+  id        String   @id @default(cuid())
+  name      String
+  plan      String   @default("TRIAL")
+  credits   Int      @default(20)
+  users     User[]
+  jobs      Job[]
+  createdAt DateTime @default(now())
+}
+
+model User {
+  id             String       @id @default(cuid())
+  name           String
+  email          String       @unique
+  role           String       @default("RECRUITER") // RECRUITER | HIRING_MANAGER | ADMIN
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  createdAt      DateTime     @default(now())
+}
+
+model Job {
+  id                String       @id @default(cuid())
+  organizationId    String
+  organization      Organization @relation(fields: [organizationId], references: [id])
+  title             String
+  department        String       @default("Engineering")
+  location          String       @default("Remote")
+  employmentType    String       @default("Full-time")
+  seniority         String       @default("Mid-Senior")
+  salaryRange       String?
+  jdText            String
+  mustHaveSkills    String[]
+  niceToHaveSkills  String[]
+  minimumExperience Float        @default(2.0)
+  weightsJson       Json?        // Configurable scoring weights per job
+  createdBy         String
+  candidates        Candidate[]
+  evaluations       Evaluation[]
+  createdAt         DateTime     @default(now())
+}
+
+model Candidate {
+  id                   String           @id @default(cuid())
+  jobId                String
+  job                  Job              @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  fullName             String
+  email                String?
+  phone                String?
+  location             String?
+  linkedinUrl          String?
+  githubUrl            String?
+  portfolioUrl         String?
+  currentTitle         String?
+  currentCompany       String?
+  totalExperienceYears Float            @default(0)
+  resumeFileUrl        String
+  rawResumeText        String
+  parsedResumeJson     Json
+  chunks               CandidateChunk[]
+  evaluation           Evaluation?
+  createdAt            DateTime         @default(now())
+}
+
+model CandidateChunk {
+  id          String    @id @default(cuid())
+  candidateId String
+  candidate   Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  chunkText   String
+  chunkType   String    // WORK_EXPERIENCE | PROJECTS | SKILLS | EDUCATION | CERTIFICATIONS
+  embedding   Json?     // Stores float[] vector (compatible with local Postgres & pgvector)
+  metadata    Json?
+}
+
+model Evaluation {
+  id                 String    @id @default(cuid())
+  candidateId        String    @unique
+  candidate          Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  jobId              String
+  job                Job       @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  overallScore       Float
+  technicalScore     Float
+  experienceScore    Float
+  domainScore        Float
+  educationScore     Float
+  seniorityScore     Float
+  locationScore      Float
+  qualityScore       Float
+  recommendation     String    // Strongly Recommend Interview | Recommend Interview | Maybe | Weak Match | Reject
+  recruiterOverride  String?   // Compliance Rule 4: Human recruiter can override AI recommendation
+  strengths          String[]
+  gaps               String[]
+  risks              String[]
+  missingSkills      String[]
+  matchedSkills      String[]
+  explanation        String
+  evidence           String[]  // Direct quotes from resume proving every score
+  interviewQuestions String[]
+  auditMetadata      Json      // Compliance Rule 8: JD version, model, prompt version, timestamp
+  createdAt          DateTime  @default(now())
+}
