@@ -1,40 +1,40 @@
-{
-  "name": "hirelens-ai-screener",
-  "version": "0.1.0",
-  "private": true,
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "eslint",
-    "postinstall": "prisma skills sync || exit 0"
-  },
-  "dependencies": {
-    "@langchain/core": "^1.5.0",
-    "@langchain/google-genai": "^2.3.7",
-    "@langchain/langgraph": "^1.7.5",
-    "@prisma/client": "^6.19.3",
-    "dotenv": "^18.0.10",
-    "lucide-react": "^1.78.0",
-    "mammoth": "^1.13.0",
-    "next": "16.4.6",
-    "pdf-parse": "^2.4.5",
-    "prisma": "^6.19.3",
-    "react": "19.3.0",
-    "react-dom": "19.3.0",
-    "recharts": "^3.11.0",
-    "zod": "^4.6.7"
-  },
-  "devDependencies": {
-    "@tailwindcss/turbopack": "4.3.3",
-    "@types/node": "^20",
-    "@types/pdf-parse": "^1.1.5",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "eslint": "^9",
-    "eslint-config-next": "16.4.6",
-    "tailwindcss": "4.3.3",
-    "tsx": "^4.23.15",
-    "typescript": "^5"
-  }
+﻿{
+    "name":  "hirelens-ai-screener",
+    "version":  "0.1.0",
+    "private":  true,
+    "scripts":  {
+                    "dev":  "next dev",
+                    "build":  "next build",
+                    "start":  "next start",
+                    "lint":  "eslint",
+                    "postinstall":  "prisma generate"
+                },
+    "dependencies":  {
+                         "@langchain/core":  "^1.5.0",
+                         "@langchain/google-genai":  "^2.3.7",
+                         "@langchain/langgraph":  "^1.7.5",
+                         "@prisma/client":  "^6.19.3",
+                         "dotenv":  "^18.0.10",
+                         "lucide-react":  "^1.78.0",
+                         "mammoth":  "^1.13.0",
+                         "next":  "16.4.6",
+                         "pdf-parse":  "^2.4.5",
+                         "prisma":  "^6.19.3",
+                         "react":  "19.3.0",
+                         "react-dom":  "19.3.0",
+                         "recharts":  "^3.11.0",
+                         "zod":  "^4.6.7"
+                     },
+    "devDependencies":  {
+                            "@tailwindcss/turbopack":  "4.3.3",
+                            "@types/node":  "^20",
+                            "@types/pdf-parse":  "^1.1.5",
+                            "@types/react":  "^19",
+                            "@types/react-dom":  "^19",
+                            "eslint":  "^9",
+                            "eslint-config-next":  "16.4.6",
+                            "tailwindcss":  "4.3.3",
+                            "tsx":  "^4.23.15",
+                            "typescript":  "^5"
+                        }
 }
